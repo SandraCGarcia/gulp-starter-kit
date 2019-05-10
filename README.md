@@ -1,5 +1,6 @@
-Quick Start Gulp
+##Quick Starter kit Gulp
 
+Gulp oficial documentation: 
 https://gulpjs.com/docs/en/getting-started/quick-start
 
 ## Guía de inicio rápido
