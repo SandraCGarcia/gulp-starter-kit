@@ -14,8 +14,8 @@ var uglify       = require('gulp-uglify');
 
 
 
-// > Procesa los archivos SASS/SCSS, añade sourcemaps y autoprefixer
-gulp.task('styles', function(done) {
+// > Procesa los archivos SASS/SCSS, aï¿½ade sourcemaps y autoprefixer
+gulp.task('styles', gulp.series (function(done) {
   gulp.src(config.scss.src)
     .pipe(sourcemaps.init())
     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
@@ -37,12 +37,12 @@ gulp.task('styles', function(done) {
     .pipe(browserSync.reload({ stream:true }));
     //.pipe(notify({message: 'CSS OK', onLast: true}));
   done();
-});
+}));
 
 
 
 // > Procesa los archivos SASS/SCSS, sin sourcemaps, minimizados y con autoprefixer
-gulp.task('styles-min', function(done) {
+gulp.task('styles-min', gulp.series (function(done) {
   gulp.src(config.scss.src)
     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
     .pipe(sass({
@@ -61,12 +61,12 @@ gulp.task('styles-min', function(done) {
     .pipe(gulp.dest(config.scss.dest))
     .pipe(notify({message: 'CSS MIN OK', onLast: true}));
   done();
-});
+}));
 
 
 
 // > Procesa los scripts concatenando
-gulp.task('scripts', function(done){
+gulp.task('scripts', gulp.series (function(done){
   gulp.src(config.js.src)
     .pipe(sourcemaps.init())
     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
@@ -77,12 +77,12 @@ gulp.task('scripts', function(done){
     .pipe(browserSync.reload({ stream:true }));
     //.pipe(notify({message: 'JS OK', onLast: true}));
   done();
-});
+}));
 
 
 
 // > Procesa los scripts concatenando, minimizando y sin sourcemaps
-gulp.task('scripts-min', function(done){
+gulp.task('scripts-min', gulp.series (function(done){
   gulp.src(config.js.src)
     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
     .pipe(concat('main.min.js'))
@@ -90,12 +90,12 @@ gulp.task('scripts-min', function(done){
     .pipe(gulp.dest(config.js.dest))
     .pipe(notify({message: 'JS MIN OK', onLast: true}));
   done();
-});
+}));
 
 
 
 // > Arranca el servidor web con BrowserSync
-gulp.task('default', gulp.series(['styles','scripts'], function(done) {
+gulp.task('default', gulp.parallel(['styles','scripts'], function(done) {
   browserSync.init({
     server : {
       baseDir: './'
@@ -103,25 +103,25 @@ gulp.task('default', gulp.series(['styles','scripts'], function(done) {
     ghostMode: false,
     online: true
   });
-  gulp.watch(config.images, gulp.series('bs-reload'));
-  gulp.watch(config.scss.src, gulp.series('styles'));
-  gulp.watch(config.js.src, gulp.series(['scripts', 'bs-reload']));
-  gulp.watch(config.html, gulp.series('bs-reload'));
+  gulp.watch(config.images, gulp.parallel('bs-reload'));
+  gulp.watch(config.scss.src, gulp.parallel('styles'));
+  gulp.watch(config.js.src, gulp.parallel(['scripts', 'bs-reload']));
+  gulp.watch(config.html, gulp.parallel('bs-reload'));
   done();
 }));
 
 
 
-// > Genera una versión lista para producción
+// > Genera una versiï¿½n lista para producciï¿½n
 gulp.task('deploy', gulp.series(['styles-min','scripts-min'], function(done) {
-  console.log('> Versión de producción: OK');
+  console.log('> Versiï¿½n de producciï¿½n: OK');
   done();
 }));
 
 
 
 // > Recarga las ventanas del navegador
-gulp.task('bs-reload', function (done) {
+gulp.task('bs-reload', gulp.series (function (done) {
   browserSync.reload();
   done();
-});
+}));
